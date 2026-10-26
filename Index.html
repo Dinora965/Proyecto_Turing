@@ -3,147 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#ffd93d">
+  <meta name="theme-color" content="#15122e">
   <title>¿Real o IA?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --tinta: #1a1633;
-      --amarillo: #ffd93d;
+      --fondo: #15122e;
+      --panel: #221e42;
+      --borde: #3a3566;
+      --texto: #f3f1ff;
+      --suave: #a9a4d0;
       --real: #0aa57f;
       --ia: #ee4b86;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       margin: 0;
       font-family: 'Bricolage Grotesque', Arial, sans-serif;
-      background: var(--amarillo);
-      color: var(--tinta);
+      background: var(--fondo);
+      color: var(--texto);
     }
+
+    button, select { touch-action: manipulation; }
 
     .oculto { display: none !important; }
 
     .pantalla { min-height: 100dvh; }
-    .interior { max-width: 480px; margin: 0 auto; padding: 24px 20px; }
+    .interior { max-width: 560px; margin: 0 auto; padding: 20px 16px; }
 
-    h1 { font-size: 52px; line-height: 1; margin: 0 0 12px; font-weight: 800; letter-spacing: -0.02em; }
-    h2 { font-size: 24px; line-height: 1.15; margin: 32px 0 0; font-weight: 800; }
-    p { font-size: 17px; line-height: 1.5; margin: 0 0 16px; color: var(--tinta); }
+    h1 { font-size: 50px; line-height: 1; margin: 0 0 12px; font-weight: 800; letter-spacing: -0.02em; }
+    h2 { font-size: 22px; line-height: 1.2; margin: 16px 0 12px; font-weight: 800; text-align: center; }
+    p { font-size: 17px; line-height: 1.5; margin: 0 0 16px; color: var(--suave); }
 
-    /* Tarjeta blanca con sombra dura */
-    .tarjeta {
-      background: white;
-      border: 3px solid var(--tinta);
-      border-radius: 24px;
-      box-shadow: 8px 8px 0 var(--tinta);
-      padding: 24px;
-    }
-
-    /* Botones con relieve */
+    /* Botón principal */
     .boton {
       width: 100%;
       font: inherit;
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 800;
       padding: 16px;
-      color: var(--tinta);
-      background: var(--amarillo);
-      border: 3px solid var(--tinta);
+      color: var(--fondo);
+      background: white;
+      border: none;
       border-radius: 16px;
-      box-shadow: 5px 5px 0 var(--tinta);
       cursor: pointer;
     }
-    .boton:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--tinta); }
-    .boton.oscuro { background: var(--tinta); color: white; box-shadow: 5px 5px 0 rgba(26, 22, 51, 0.3); }
+    .boton:active { transform: scale(0.98); }
+    .boton.oscuro { background: var(--fondo); color: white; }
 
     select {
       width: 100%;
       font: inherit;
       font-size: 17px;
       padding: 16px;
-      border: 3px solid var(--tinta);
+      color: var(--texto);
+      background: var(--panel);
+      border: 2px solid var(--borde);
       border-radius: 16px;
-      background: white;
-      color: var(--tinta);
-      margin-bottom: 20px;
+      margin-bottom: 14px;
     }
 
-    /* Portada dividida en dos colores */
-    .portada {
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(165deg, var(--real) 50%, var(--ia) 50%);
-    }
-    .portada .interior {
-      position: relative;
-      z-index: 2;
+    /* Portada */
+    #inicio .interior {
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
-    .gigante {
+    .venn { position: relative; height: 150px; margin-bottom: 28px; }
+    .circulo {
       position: absolute;
-      z-index: 1;
-      margin: 0;
+      top: 0;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      mix-blend-mode: screen;
+      display: flex;
+      align-items: center;
       color: white;
-      font-size: min(38vw, 190px);
+      font-size: 30px;
       font-weight: 800;
-      line-height: 0.85;
-      letter-spacing: -0.04em;
     }
-    .g-real { top: 20px; left: 14px; }
-    .g-ia { bottom: 20px; right: 14px; }
+    .c-real { left: 0; background: var(--real); padding-left: 26px; }
+    .c-ia { left: 90px; background: var(--ia); justify-content: flex-end; padding-right: 26px; }
 
     /* Barra de progreso y resultados */
     #progreso, #resultados { display: flex; gap: 6px; }
     #progreso span, #resultados span {
       flex: 1;
-      height: 16px;
-      border: 3px solid var(--tinta);
-      border-radius: 8px;
-      background: white;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--borde);
     }
-    #progreso span.actual {
-      background: repeating-linear-gradient(45deg, var(--tinta) 0 4px, white 4px 8px);
-    }
-    #progreso span.hecho, #resultados span.hecho { background: var(--tinta); }
+    #progreso span.actual { background: var(--suave); }
+    #progreso span.hecho, #resultados span.hecho { background: white; }
 
     /* Pantalla del contenido */
     #pantalla-item .interior { padding-bottom: 150px; }
 
-    #contenido {
-      margin-top: 24px;
-      background: white;
-      border: 3px solid var(--tinta);
-      border-radius: 24px;
-      box-shadow: 8px 8px 0 var(--tinta);
-      overflow: hidden;
-    }
+    #contenido { text-align: center; }
     #contenido img, #contenido video {
       display: block;
       width: 100%;
-      max-height: 52dvh;
+      max-height: calc(100dvh - 300px);
       object-fit: contain;
       background: #000;
+      border-radius: 18px;
     }
-    .caja-audio { padding: 32px 16px; text-align: center; }
-    .caja-audio p { margin-bottom: 16px; font-size: 20px; font-weight: 800; }
+    #contenido img { cursor: zoom-in; }
+
+    .caja-audio {
+      padding: 36px 16px;
+      background: var(--panel);
+      border-radius: 18px;
+    }
+    .caja-audio p { margin-bottom: 16px; font-size: 20px; font-weight: 800; color: var(--texto); }
     .caja-audio audio { width: 100%; }
 
-    #error {
-      margin-top: 20px;
-      padding: 12px;
-      background: var(--ia);
-      color: white;
-      font-weight: 700;
-      border: 3px solid var(--tinta);
-      border-radius: 14px;
+    #pista { text-align: center; font-size: 14px; margin: 10px 0 0; min-height: 20px; }
+
+    /* Imagen ampliada */
+    #ampliada {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 20;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+    #ampliada img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
     /* Barra inferior con los dos botones */
     .barra {
@@ -151,27 +147,36 @@
       left: 0;
       right: 0;
       bottom: 0;
-      max-width: 480px;
+      max-width: 560px;
       margin: 0 auto;
-      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
-      background: var(--amarillo);
-      border-top: 3px solid var(--tinta);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: var(--fondo);
+      border-top: 1px solid var(--borde);
     }
-    #botones { display: flex; gap: 14px; }
+    #error {
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+      background: var(--ia);
+      border-radius: 12px;
+    }
+    #botones { display: flex; gap: 12px; }
     #botones button {
       flex: 1;
-      height: 80px;
+      height: 76px;
       font: inherit;
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 800;
       color: white;
-      border: 3px solid var(--tinta);
+      border: none;
       border-radius: 20px;
-      box-shadow: 5px 5px 0 var(--tinta);
       cursor: pointer;
     }
-    #botones button:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--tinta); }
-    #botones button:disabled { opacity: 0.5; }
+    #botones button:active { transform: scale(0.96); }
+    #botones.enviando button { opacity: 0.35; }
+    #botones.enviando button.elegido { opacity: 1; font-size: 22px; }
     .btn-real { background: var(--real); }
     .btn-ia { background: var(--ia); }
 
@@ -201,10 +206,16 @@
       line-height: 0.95;
       letter-spacing: -0.04em;
       margin: 0 0 24px;
-      animation: pop 0.35s ease-out;
+      animation: pop 0.3s ease-out;
     }
-    .sobre .tarjeta { animation: pop 0.35s ease-out; }
-    #titulo-fb { font-size: 26px; font-weight: 800; margin: 0 0 8px; }
+    .tarjeta {
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      animation: pop 0.3s ease-out;
+    }
+    .tarjeta p { color: var(--fondo); }
+    #titulo-fb { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
     #mensaje { margin-bottom: 20px; }
 
     /* Pantalla final */
@@ -214,40 +225,51 @@
       flex-direction: column;
       justify-content: center;
     }
-    #puntaje { font-size: min(32vw, 140px); line-height: 0.95; letter-spacing: -0.04em; margin: 0 0 20px; }
-    #resultados { margin: 8px 0 24px; }
-    #final p:last-child { margin-bottom: 0; }
+    #puntaje { font-size: min(34vw, 150px); line-height: 0.95; letter-spacing: -0.04em; margin: 0 0 20px; }
+    #resultados { margin: 8px 0 28px; }
+    #resultados span { height: 12px; border-radius: 6px; }
+    #comentario { color: var(--texto); font-size: 20px; font-weight: 700; }
 
     @keyframes pop {
-      from { transform: scale(0.85); opacity: 0; }
+      from { transform: scale(0.9); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .palabra, .sobre .tarjeta { animation: none; }
+      .palabra, .tarjeta { animation: none; }
     }
   </style>
 </head>
 <body>
 
   <!-- Inicio -->
-  <section id="inicio" class="pantalla portada">
-    <p class="gigante g-real">Real</p>
-    <p class="gigante g-ia">IA</p>
+  <section id="inicio" class="pantalla">
     <div class="interior">
-      <div class="tarjeta">
-        <h1>¿Real o IA?</h1>
-        <p>Verás imágenes, videos y audios. Decide cuáles son reales y cuáles los creó una inteligencia artificial. Toma 2 minutos.</p>
-        <select id="carrera">
-          <option value="">Elige tu carrera</option>
-          <option>Ingeniería en Sistemas</option>
-          <option>Administración</option>
-          <option>Contaduría</option>
-          <option>Derecho</option>
-          <option>Otra</option>
-        </select>
-        <button class="boton" onclick="empezar()">Empezar</button>
+      <div class="venn">
+        <div class="circulo c-real">Real</div>
+        <div class="circulo c-ia">IA</div>
       </div>
+      <h1>¿Real o IA?</h1>
+      <p>Verás imágenes, videos y audios. Decide cuáles son reales y cuáles los creó una inteligencia artificial. Toma 2 minutos.</p>
+      <select id="carrera">
+        <option value="">Elige tu carrera</option>
+        <optgroup label="Licenciaturas e Ingenierías">
+          <option>Administración y Generación de Empresas</option>
+          <option>Ingeniería en Sistemas Computacionales</option>
+          <option>Ingeniería Agroindustrial</option>
+          <option>Licenciatura en Comercio Internacional</option>
+          <option>Licenciatura en Desarrollo Local</option>
+        </optgroup>
+        <optgroup label="Técnicos Universitarios">
+          <option>Técnico en Administración de Empresas Cafetaleras</option>
+          <option>Técnico Universitario en Producción Agrícola</option>
+          <option>Técnico en Tecnología de Alimentos</option>
+          <option>Tecnólogo en Agroexportaciones</option>
+          <option>Técnico en Microfinanzas</option>
+        </optgroup>
+        <option>Otro (no soy estudiante)</option>
+      </select>
+      <button class="boton" onclick="empezar()">Empezar</button>
     </div>
   </section>
 
@@ -255,14 +277,17 @@
   <section id="pantalla-item" class="pantalla oculto">
     <div class="interior">
       <div id="progreso"></div>
+      <h2>¿Real o creado por IA?</h2>
       <div id="contenido"></div>
-      <h2>¿Esto es real o lo creó una IA?</h2>
-      <p id="error" class="oculto"></p>
+      <p id="pista"></p>
     </div>
 
-    <div class="barra" id="botones">
-      <button class="btn-real" onclick="responder('Real')">Real</button>
-      <button class="btn-ia" onclick="responder('IA')">IA</button>
+    <div class="barra">
+      <p id="error" class="oculto"></p>
+      <div id="botones">
+        <button class="btn-real" onclick="responder('Real', this)">Real</button>
+        <button class="btn-ia" onclick="responder('IA', this)">IA</button>
+      </div>
     </div>
 
     <div id="feedback" class="sobre oculto">
@@ -281,18 +306,21 @@
   <!-- Final -->
   <section id="final" class="pantalla oculto">
     <div class="interior">
-      <div class="tarjeta">
-        <h1 id="puntaje"></h1>
-        <div id="resultados"></div>
-        <p id="comentario"></p>
-        <p>Cuéntale a un compañero cómo te fue y reta a que lo intente.</p>
-      </div>
+      <h1 id="puntaje"></h1>
+      <div id="resultados"></div>
+      <p id="comentario"></p>
+      <p>Cuéntale a un compañero cómo te fue y reta a que lo intente.</p>
     </div>
   </section>
 
+  <!-- Imagen en pantalla completa -->
+  <div id="ampliada" class="oculto" onclick="cerrarAmpliada()">
+    <img id="img-grande" alt="Imagen ampliada">
+  </div>
+
   <script>
     // URL del Web App de Apps Script
-    var URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzUhnBtucv6Lmi8JMqTdCahjzf09wKLnK8NBA51rnhBAQt2T5d7qlRSF5kUmOs0ZcKa/exec';
+    var URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxuuIfD0gPeur-k4YYkz5zDF-UJMre2zIE0v02XE17zcwmQ5BWkP3yteoLzm2lWxB9f/exec';
 
     // Contenido del test (el id debe existir en CLAVE de Code.gs)
     var ITEMS = [
@@ -300,8 +328,9 @@
       { id: 2, tipo: 'imagen', archivo: 'media/img2.jpg' },
       { id: 3, tipo: 'video',  archivo: 'media/video1.mp4' },
       { id: 4, tipo: 'video',  archivo: 'media/video2.mp4' },
-      { id: 5, tipo: 'audio',  archivo: 'media/audio1.mp3' },
-      { id: 6, tipo: 'audio',  archivo: 'media/audio2.mp3' }
+      // Cuando subas los audios, quita las // de estas dos líneas
+      // { id: 5, tipo: 'audio',  archivo: 'media/audio1.mp3' },
+      // { id: 6, tipo: 'audio',  archivo: 'media/audio2.mp3' }
     ];
 
     var sesion = 'S' + Date.now() + Math.floor(Math.random() * 1000);
@@ -310,6 +339,7 @@
     var aciertos = 0;
     var resultados = [];
     var inicioItem = 0;
+    var enviando = false;
 
     // Muestra una sola pantalla
     function mostrar(id) {
@@ -348,12 +378,27 @@
       document.getElementById('progreso').innerHTML = html;
     }
 
+    // Deja los botones listos para responder
+    function resetBotones() {
+      enviando = false;
+      var contenedor = document.getElementById('botones');
+      contenedor.classList.remove('enviando');
+      var botones = contenedor.querySelectorAll('button');
+      botones[0].textContent = 'Real';
+      botones[1].textContent = 'IA';
+      botones[0].classList.remove('elegido');
+      botones[1].classList.remove('elegido');
+    }
+
     function mostrarItem() {
       var item = ITEMS[indice];
       var caja = document.getElementById('contenido');
+      var pista = document.getElementById('pista');
+      pista.textContent = '';
 
       if (item.tipo === 'imagen') {
-        caja.innerHTML = '<img src="' + item.archivo + '" alt="Imagen a evaluar">';
+        caja.innerHTML = '<img src="' + item.archivo + '" alt="Imagen a evaluar" onclick="ampliar(this.src)">';
+        pista.textContent = 'Toca la imagen para verla más grande';
       } else if (item.tipo === 'video') {
         caja.innerHTML = '<video src="' + item.archivo + '" controls playsinline></video>';
       } else {
@@ -362,36 +407,47 @@
       }
 
       pintarProgreso();
+      resetBotones();
       document.getElementById('feedback').className = 'sobre oculto';
       document.getElementById('error').classList.add('oculto');
-      activarBotones(true);
 
       inicioItem = Date.now();
       mostrar('pantalla-item');
     }
 
-    function activarBotones(activos) {
-      var botones = document.querySelectorAll('#botones button');
-      for (var i = 0; i < botones.length; i++) {
-        botones[i].disabled = !activos;
-      }
+    function ampliar(ruta) {
+      document.getElementById('img-grande').src = ruta;
+      document.getElementById('ampliada').classList.remove('oculto');
     }
 
-    // Envía la respuesta a Apps Script
-    function responder(valor) {
-      activarBotones(false);
-      var item = ITEMS[indice];
-      var segundos = Math.round((Date.now() - inicioItem) / 1000);
+    function cerrarAmpliada() {
+      document.getElementById('ampliada').classList.add('oculto');
+    }
 
+    // Responde al instante y envía a Apps Script
+    function responder(valor, boton) {
+      if (enviando) {
+        return;
+      }
+      enviando = true;
+      document.getElementById('error').classList.add('oculto');
+      document.getElementById('botones').classList.add('enviando');
+      boton.classList.add('elegido');
+      boton.textContent = 'Guardando…';
+
+      var item = ITEMS[indice];
       var datos = {
         sesion: sesion,
         carrera: carrera,
         idItem: item.id,
         tipo: item.tipo,
         respuesta: valor,
-        segundos: segundos
+        segundos: Math.round((Date.now() - inicioItem) / 1000)
       };
+      enviar(datos, 1);
+    }
 
+    function enviar(datos, intento) {
       fetch(URL_SCRIPT, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -401,17 +457,28 @@
           return respuesta.json();
         })
         .then(function (res) {
-          if (!res.ok) {
-            throw new Error(res.error);
+          if (res.ok) {
+            mostrarResultado(res);
+          } else {
+            reintentar(datos, intento);
           }
-          mostrarResultado(res);
-        })
-        .catch(function () {
-          var error = document.getElementById('error');
-          error.textContent = 'No se pudo guardar. Revisa tu internet e intenta de nuevo.';
-          error.classList.remove('oculto');
-          activarBotones(true);
+        }, function () {
+          reintentar(datos, intento);
         });
+    }
+
+    // Reintenta solo hasta 3 veces
+    function reintentar(datos, intento) {
+      if (intento < 3) {
+        setTimeout(function () {
+          enviar(datos, intento + 1);
+        }, 1200);
+        return;
+      }
+      resetBotones();
+      var error = document.getElementById('error');
+      error.textContent = 'No se pudo guardar. Revisa tu internet y toca de nuevo.';
+      error.classList.remove('oculto');
     }
 
     function mostrarResultado(res) {
