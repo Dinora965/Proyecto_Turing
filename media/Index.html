@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffd93d">
+  <title>¿Real o IA?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --tinta: #1a1633;
+      --amarillo: #ffd93d;
+      --real: #0aa57f;
+      --ia: #ee4b86;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Bricolage Grotesque', Arial, sans-serif;
+      background: var(--amarillo);
+      color: var(--tinta);
+    }
+
+    .oculto { display: none !important; }
+
+    .pantalla { min-height: 100dvh; }
+    .interior { max-width: 480px; margin: 0 auto; padding: 24px 20px; }
+
+    h1 { font-size: 52px; line-height: 1; margin: 0 0 12px; font-weight: 800; letter-spacing: -0.02em; }
+    h2 { font-size: 24px; line-height: 1.15; margin: 32px 0 0; font-weight: 800; }
+    p { font-size: 17px; line-height: 1.5; margin: 0 0 16px; color: var(--tinta); }
+
+    /* Tarjeta blanca con sombra dura */
+    .tarjeta {
+      background: white;
+      border: 3px solid var(--tinta);
+      border-radius: 24px;
+      box-shadow: 8px 8px 0 var(--tinta);
+      padding: 24px;
+    }
+
+    /* Botones con relieve */
+    .boton {
+      width: 100%;
+      font: inherit;
+      font-size: 20px;
+      font-weight: 800;
+      padding: 16px;
+      color: var(--tinta);
+      background: var(--amarillo);
+      border: 3px solid var(--tinta);
+      border-radius: 16px;
+      box-shadow: 5px 5px 0 var(--tinta);
+      cursor: pointer;
+    }
+    .boton:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--tinta); }
+    .boton.oscuro { background: var(--tinta); color: white; box-shadow: 5px 5px 0 rgba(26, 22, 51, 0.3); }
+
+    select {
+      width: 100%;
+      font: inherit;
+      font-size: 17px;
+      padding: 16px;
+      border: 3px solid var(--tinta);
+      border-radius: 16px;
+      background: white;
+      color: var(--tinta);
+      margin-bottom: 20px;
+    }
+
+    /* Portada dividida en dos colores */
+    .portada {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(165deg, var(--real) 50%, var(--ia) 50%);
+    }
+    .portada .interior {
+      position: relative;
+      z-index: 2;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .gigante {
+      position: absolute;
+      z-index: 1;
+      margin: 0;
+      color: white;
+      font-size: min(38vw, 190px);
+      font-weight: 800;
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+    }
+    .g-real { top: 20px; left: 14px; }
+    .g-ia { bottom: 20px; right: 14px; }
+
+    /* Barra de progreso y resultados */
+    #progreso, #resultados { display: flex; gap: 6px; }
+    #progreso span, #resultados span {
+      flex: 1;
+      height: 16px;
+      border: 3px solid var(--tinta);
+      border-radius: 8px;
+      background: white;
+    }
+    #progreso span.actual {
+      background: repeating-linear-gradient(45deg, var(--tinta) 0 4px, white 4px 8px);
+    }
+    #progreso span.hecho, #resultados span.hecho { background: var(--tinta); }
+
+    /* Pantalla del contenido */
+    #pantalla-item .interior { padding-bottom: 150px; }
+
+    #contenido {
+      margin-top: 24px;
+      background: white;
+      border: 3px solid var(--tinta);
+      border-radius: 24px;
+      box-shadow: 8px 8px 0 var(--tinta);
+      overflow: hidden;
+    }
+    #contenido img, #contenido video {
+      display: block;
+      width: 100%;
+      max-height: 52dvh;
+      object-fit: contain;
+      background: #000;
+    }
+    .caja-audio { padding: 32px 16px; text-align: center; }
+    .caja-audio p { margin-bottom: 16px; font-size: 20px; font-weight: 800; }
+    .caja-audio audio { width: 100%; }
+
+    #error {
+      margin-top: 20px;
+      padding: 12px;
+      background: var(--ia);
+      color: white;
+      font-weight: 700;
+      border: 3px solid var(--tinta);
+      border-radius: 14px;
+    }
+
+    /* Barra inferior con los dos botones */
+    .barra {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+      background: var(--amarillo);
+      border-top: 3px solid var(--tinta);
+    }
+    #botones { display: flex; gap: 14px; }
+    #botones button {
+      flex: 1;
+      height: 80px;
+      font: inherit;
+      font-size: 30px;
+      font-weight: 800;
+      color: white;
+      border: 3px solid var(--tinta);
+      border-radius: 20px;
+      box-shadow: 5px 5px 0 var(--tinta);
+      cursor: pointer;
+    }
+    #botones button:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--tinta); }
+    #botones button:disabled { opacity: 0.5; }
+    .btn-real { background: var(--real); }
+    .btn-ia { background: var(--ia); }
+
+    /* Pantalla completa de resultado */
+    .sobre {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+    }
+    .sobre.real { background: var(--real); }
+    .sobre.ia { background: var(--ia); }
+    .sobre-interior { width: 100%; max-width: 480px; margin: 0 auto; }
+
+    .era { color: white; font-size: 24px; font-weight: 700; margin: 0; }
+    .palabra {
+      color: white;
+      font-size: min(36vw, 180px);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      margin: 0 0 24px;
+      animation: pop 0.35s ease-out;
+    }
+    .sobre .tarjeta { animation: pop 0.35s ease-out; }
+    #titulo-fb { font-size: 26px; font-weight: 800; margin: 0 0 8px; }
+    #mensaje { margin-bottom: 20px; }
+
+    /* Pantalla final */
+    #final .interior {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #puntaje { font-size: min(32vw, 140px); line-height: 0.95; letter-spacing: -0.04em; margin: 0 0 20px; }
+    #resultados { margin: 8px 0 24px; }
+    #final p:last-child { margin-bottom: 0; }
+
+    @keyframes pop {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .palabra, .sobre .tarjeta { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Inicio -->
+  <section id="inicio" class="pantalla portada">
+    <p class="gigante g-real">Real</p>
+    <p class="gigante g-ia">IA</p>
+    <div class="interior">
+      <div class="tarjeta">
+        <h1>¿Real o IA?</h1>
+        <p>Verás imágenes, videos y audios. Decide cuáles son reales y cuáles los creó una inteligencia artificial. Toma 2 minutos.</p>
+        <select id="carrera">
+          <option value="">Elige tu carrera</option>
+          <option>Ingeniería en Sistemas</option>
+          <option>Administración</option>
+          <option>Contaduría</option>
+          <option>Derecho</option>
+          <option>Otra</option>
+        </select>
+        <button class="boton" onclick="empezar()">Empezar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contenido a evaluar -->
+  <section id="pantalla-item" class="pantalla oculto">
+    <div class="interior">
+      <div id="progreso"></div>
+      <div id="contenido"></div>
+      <h2>¿Esto es real o lo creó una IA?</h2>
+      <p id="error" class="oculto"></p>
+    </div>
+
+    <div class="barra" id="botones">
+      <button class="btn-real" onclick="responder('Real')">Real</button>
+      <button class="btn-ia" onclick="responder('IA')">IA</button>
+    </div>
+
+    <div id="feedback" class="sobre oculto">
+      <div class="sobre-interior">
+        <p class="era">Era</p>
+        <p class="palabra" id="palabra"></p>
+        <div class="tarjeta">
+          <p id="titulo-fb"></p>
+          <p id="mensaje"></p>
+          <button class="boton oscuro" id="btn-siguiente" onclick="siguiente()">Siguiente</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final -->
+  <section id="final" class="pantalla oculto">
+    <div class="interior">
+      <div class="tarjeta">
+        <h1 id="puntaje"></h1>
+        <div id="resultados"></div>
+        <p id="comentario"></p>
+        <p>Cuéntale a un compañero cómo te fue y reta a que lo intente.</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // URL del Web App de Apps Script
+    var URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzUhnBtucv6Lmi8JMqTdCahjzf09wKLnK8NBA51rnhBAQt2T5d7qlRSF5kUmOs0ZcKa/exec';
+
+    // Contenido del test (el id debe existir en CLAVE de Code.gs)
+    var ITEMS = [
+      { id: 1, tipo: 'imagen', archivo: 'media/img1.jpg' },
+      { id: 2, tipo: 'imagen', archivo: 'media/img2.jpg' },
+      { id: 3, tipo: 'video',  archivo: 'media/video1.mp4' },
+      { id: 4, tipo: 'video',  archivo: 'media/video2.mp4' },
+      { id: 5, tipo: 'audio',  archivo: 'media/audio1.mp3' },
+      { id: 6, tipo: 'audio',  archivo: 'media/audio2.mp3' }
+    ];
+
+    var sesion = 'S' + Date.now() + Math.floor(Math.random() * 1000);
+    var carrera = '';
+    var indice = 0;
+    var aciertos = 0;
+    var resultados = [];
+    var inicioItem = 0;
+
+    // Muestra una sola pantalla
+    function mostrar(id) {
+      var pantallas = document.querySelectorAll('.pantalla');
+      for (var i = 0; i < pantallas.length; i++) {
+        pantallas[i].classList.add('oculto');
+      }
+      document.getElementById(id).classList.remove('oculto');
+      window.scrollTo(0, 0);
+    }
+
+    function empezar() {
+      carrera = document.getElementById('carrera').value;
+      if (carrera === '') {
+        alert('Elige tu carrera para continuar');
+        return;
+      }
+      indice = 0;
+      aciertos = 0;
+      resultados = [];
+      mostrarItem();
+    }
+
+    // Dibuja la barra de progreso
+    function pintarProgreso() {
+      var html = '';
+      for (var i = 0; i < ITEMS.length; i++) {
+        var clase = '';
+        if (i < indice) {
+          clase = 'hecho';
+        } else if (i === indice) {
+          clase = 'actual';
+        }
+        html += '<span class="' + clase + '"></span>';
+      }
+      document.getElementById('progreso').innerHTML = html;
+    }
+
+    function mostrarItem() {
+      var item = ITEMS[indice];
+      var caja = document.getElementById('contenido');
+
+      if (item.tipo === 'imagen') {
+        caja.innerHTML = '<img src="' + item.archivo + '" alt="Imagen a evaluar">';
+      } else if (item.tipo === 'video') {
+        caja.innerHTML = '<video src="' + item.archivo + '" controls playsinline></video>';
+      } else {
+        caja.innerHTML = '<div class="caja-audio"><p>Escucha con atención</p>' +
+          '<audio src="' + item.archivo + '" controls></audio></div>';
+      }
+
+      pintarProgreso();
+      document.getElementById('feedback').className = 'sobre oculto';
+      document.getElementById('error').classList.add('oculto');
+      activarBotones(true);
+
+      inicioItem = Date.now();
+      mostrar('pantalla-item');
+    }
+
+    function activarBotones(activos) {
+      var botones = document.querySelectorAll('#botones button');
+      for (var i = 0; i < botones.length; i++) {
+        botones[i].disabled = !activos;
+      }
+    }
+
+    // Envía la respuesta a Apps Script
+    function responder(valor) {
+      activarBotones(false);
+      var item = ITEMS[indice];
+      var segundos = Math.round((Date.now() - inicioItem) / 1000);
+
+      var datos = {
+        sesion: sesion,
+        carrera: carrera,
+        idItem: item.id,
+        tipo: item.tipo,
+        respuesta: valor,
+        segundos: segundos
+      };
+
+      fetch(URL_SCRIPT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(datos)
+      })
+        .then(function (respuesta) {
+          return respuesta.json();
+        })
+        .then(function (res) {
+          if (!res.ok) {
+            throw new Error(res.error);
+          }
+          mostrarResultado(res);
+        })
+        .catch(function () {
+          var error = document.getElementById('error');
+          error.textContent = 'No se pudo guardar. Revisa tu internet e intenta de nuevo.';
+          error.classList.remove('oculto');
+          activarBotones(true);
+        });
+    }
+
+    function mostrarResultado(res) {
+      var titulo = document.getElementById('titulo-fb');
+
+      if (res.acierto) {
+        aciertos++;
+        titulo.textContent = '✓ ¡Acertaste!';
+      } else {
+        titulo.textContent = '✕ Esta vez no';
+      }
+      resultados.push(res.acierto);
+
+      document.getElementById('palabra').textContent = res.real;
+      document.getElementById('mensaje').textContent = res.explicacion;
+
+      if (indice === ITEMS.length - 1) {
+        document.getElementById('btn-siguiente').textContent = 'Ver resultado';
+      } else {
+        document.getElementById('btn-siguiente').textContent = 'Siguiente';
+      }
+
+      // El fondo toma el color de la respuesta correcta
+      var color = (res.real === 'Real') ? 'real' : 'ia';
+      document.getElementById('feedback').className = 'sobre ' + color;
+    }
+
+    function siguiente() {
+      indice++;
+      if (indice < ITEMS.length) {
+        mostrarItem();
+      } else {
+        mostrarFinal();
+      }
+    }
+
+    function mostrarFinal() {
+      document.getElementById('puntaje').textContent = aciertos + '/' + ITEMS.length;
+
+      var html = '';
+      for (var i = 0; i < resultados.length; i++) {
+        html += '<span class="' + (resultados[i] ? 'hecho' : '') + '"></span>';
+      }
+      document.getElementById('resultados').innerHTML = html;
+
+      var comentario = document.getElementById('comentario');
+      if (aciertos >= ITEMS.length * 0.7) {
+        comentario.textContent = 'Buen ojo. Pero la IA mejora cada mes, así que no bajes la guardia.';
+      } else {
+        comentario.textContent = 'No eres el único. Hoy la IA es muy difícil de detectar, y por eso hicimos este test.';
+      }
+      mostrar('final');
+    }
+  </script>
+</body>
+</html>
