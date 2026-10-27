@@ -3,20 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#15122e">
+  <meta name="theme-color" content="#2447e8">
   <title>¿Real o IA?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fondo: #15122e;
-      --panel: #221e42;
-      --borde: #3a3566;
-      --texto: #f3f1ff;
-      --suave: #a9a4d0;
-      --real: #0aa57f;
-      --ia: #ee4b86;
+      --azul: #2447e8;
+      --marino: #0b1b5c;
+      --panel: #142a78;
+      --celeste: #5ad1ff;
+      --amarillo: #ffc933;
+      --claro: #e4eaff;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -24,8 +23,8 @@
     body {
       margin: 0;
       font-family: 'Bricolage Grotesque', Arial, sans-serif;
-      background: var(--fondo);
-      color: var(--texto);
+      background: var(--marino);
+      color: white;
     }
 
     button, select { touch-action: manipulation; }
@@ -37,79 +36,144 @@
 
     h1 { font-size: 50px; line-height: 1; margin: 0 0 12px; font-weight: 800; letter-spacing: -0.02em; }
     h2 { font-size: 22px; line-height: 1.2; margin: 16px 0 12px; font-weight: 800; text-align: center; }
-    p { font-size: 17px; line-height: 1.5; margin: 0 0 16px; color: var(--suave); }
+    p { font-size: 17px; line-height: 1.5; margin: 0 0 16px; color: var(--claro); }
 
-    /* Botón principal */
+    /* Botón amarillo con relieve */
     .boton {
       width: 100%;
       font: inherit;
-      font-size: 19px;
+      font-size: 21px;
       font-weight: 800;
-      padding: 16px;
-      color: var(--fondo);
-      background: white;
+      padding: 17px;
+      color: var(--marino);
+      background: var(--amarillo);
       border: none;
-      border-radius: 16px;
+      border-radius: 18px;
+      box-shadow: 0 5px 0 #d9a400;
       cursor: pointer;
     }
-    .boton:active { transform: scale(0.98); }
-    .boton.oscuro { background: var(--fondo); color: white; }
+    .boton:active { transform: translateY(3px); box-shadow: 0 2px 0 #d9a400; }
+
+    /* Fondo azul con puntos y círculos */
+    .fondo-azul {
+      position: relative;
+      overflow: hidden;
+      background-color: var(--azul);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+    }
+    .fondo-azul::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      background: var(--amarillo);
+    }
+    .fondo-azul::after {
+      content: '';
+      position: absolute;
+      left: -70px;
+      top: 46%;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: var(--celeste);
+      opacity: 0.85;
+    }
+
+    /* Portada */
+    #inicio { display: flex; flex-direction: column; }
+
+    .arriba {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 32px 20px 24px;
+    }
+
+    .retrato { position: relative; width: min(60vw, 240px); margin-bottom: 22px; }
+    .retrato svg { display: block; width: 100%; height: auto; }
+
+    .etiqueta {
+      position: absolute;
+      bottom: -6px;
+      padding: 6px 16px;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--marino);
+      border: 3px solid var(--marino);
+      border-radius: 20px;
+    }
+    .e-real { left: -8%; background: var(--amarillo); }
+    .e-ia { right: -8%; background: var(--celeste); }
+
+    #inicio h1 { font-size: clamp(46px, 14vw, 66px); color: white; }
+    .subtitulo { max-width: 30ch; margin: 0 auto 18px; font-size: 18px; }
+
+    .tipos { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .tipo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 20px;
+    }
+    .tipo svg { width: 18px; height: 18px; }
+
+    .formulario {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 22px 20px calc(24px + env(safe-area-inset-bottom));
+      background: white;
+      border-radius: 28px 28px 0 0;
+    }
+    .formulario p { color: #4a5a99; font-size: 15px; margin-bottom: 12px; }
 
     select {
       width: 100%;
       font: inherit;
       font-size: 17px;
       padding: 16px;
-      color: var(--texto);
-      background: var(--panel);
-      border: 2px solid var(--borde);
+      color: var(--marino);
+      background: #eef2ff;
+      border: 2px solid #c9d5ff;
       border-radius: 16px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
-    /* Portada */
-    #inicio .interior {
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .venn { position: relative; height: 150px; margin-bottom: 28px; }
-    .circulo {
-      position: absolute;
-      top: 0;
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      mix-blend-mode: screen;
-      display: flex;
-      align-items: center;
-      color: white;
-      font-size: 30px;
-      font-weight: 800;
-    }
-    .c-real { left: 0; background: var(--real); padding-left: 26px; }
-    .c-ia { left: 90px; background: var(--ia); justify-content: flex-end; padding-right: 26px; }
-
-    /* Barra de progreso y resultados */
-    #progreso, #resultados { display: flex; gap: 6px; }
-    #progreso span, #resultados span {
+    /* Barra de progreso */
+    #progreso { display: flex; gap: 6px; }
+    #progreso span {
       flex: 1;
-      height: 6px;
-      border-radius: 3px;
-      background: var(--borde);
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.2);
     }
-    #progreso span.actual { background: var(--suave); }
-    #progreso span.hecho, #resultados span.hecho { background: white; }
+    #progreso span.actual { background: var(--celeste); }
+    #progreso span.hecho { background: var(--amarillo); }
 
     /* Pantalla del contenido */
-    #pantalla-item .interior { padding-bottom: 150px; }
+    #pantalla-item .interior { padding-bottom: 130px; }
 
     #contenido { text-align: center; }
     #contenido img, #contenido video {
       display: block;
       width: 100%;
-      max-height: calc(100dvh - 300px);
+      max-height: calc(100dvh - 290px);
       object-fit: contain;
       background: #000;
       border-radius: 18px;
@@ -121,10 +185,10 @@
       background: var(--panel);
       border-radius: 18px;
     }
-    .caja-audio p { margin-bottom: 16px; font-size: 20px; font-weight: 800; color: var(--texto); }
+    .caja-audio p { margin-bottom: 16px; font-size: 20px; font-weight: 800; color: white; }
     .caja-audio audio { width: 100%; }
 
-    #pista { text-align: center; font-size: 14px; margin: 10px 0 0; min-height: 20px; }
+    #pista { text-align: center; font-size: 14px; margin: 10px 0 0; min-height: 20px; opacity: 0.7; }
 
     /* Imagen ampliada */
     #ampliada {
@@ -150,17 +214,8 @@
       max-width: 560px;
       margin: 0 auto;
       padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-      background: var(--fondo);
-      border-top: 1px solid var(--borde);
-    }
-    #error {
-      margin: 0 0 10px;
-      padding: 10px 12px;
-      font-size: 15px;
-      font-weight: 700;
-      color: white;
-      background: var(--ia);
-      border-radius: 12px;
+      background: var(--marino);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
     #botones { display: flex; gap: 12px; }
     #botones button {
@@ -169,104 +224,127 @@
       font: inherit;
       font-size: 28px;
       font-weight: 800;
-      color: white;
+      color: var(--marino);
       border: none;
       border-radius: 20px;
       cursor: pointer;
     }
-    #botones button:active { transform: scale(0.96); }
-    #botones.enviando button { opacity: 0.35; }
-    #botones.enviando button.elegido { opacity: 1; font-size: 22px; }
-    .btn-real { background: var(--real); }
-    .btn-ia { background: var(--ia); }
-
-    /* Pantalla completa de resultado */
-    .sobre {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
-      overflow-y: auto;
-    }
-    .sobre.real { background: var(--real); }
-    .sobre.ia { background: var(--ia); }
-    .sobre-interior { width: 100%; max-width: 480px; margin: 0 auto; }
-
-    .era { color: white; font-size: 24px; font-weight: 700; margin: 0; }
-    .palabra {
-      color: white;
-      font-size: min(36vw, 180px);
-      font-weight: 800;
-      line-height: 0.95;
-      letter-spacing: -0.04em;
-      margin: 0 0 24px;
-      animation: pop 0.3s ease-out;
-    }
-    .tarjeta {
-      background: white;
-      border-radius: 24px;
-      padding: 24px;
-      animation: pop 0.3s ease-out;
-    }
-    .tarjeta p { color: var(--fondo); }
-    #titulo-fb { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
-    #mensaje { margin-bottom: 20px; }
+    #botones.enviando button { opacity: 0.3; }
+    #botones.enviando button.elegido { opacity: 1; transform: scale(1.04); }
+    .btn-real { background: var(--amarillo); }
+    .btn-ia { background: var(--celeste); }
 
     /* Pantalla final */
     #final .interior {
+      position: relative;
+      z-index: 1;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
-    #puntaje { font-size: min(34vw, 150px); line-height: 0.95; letter-spacing: -0.04em; margin: 0 0 20px; }
-    #resultados { margin: 8px 0 28px; }
-    #resultados span { height: 12px; border-radius: 6px; }
-    #comentario { color: var(--texto); font-size: 20px; font-weight: 700; }
-
-    @keyframes pop {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .palabra, .tarjeta { animation: none; }
+    #titulo-final { font-size: clamp(40px, 12vw, 64px); margin-bottom: 20px; }
+    #comentario { color: white; font-size: 20px; font-weight: 700; }
+    #aviso {
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--marino);
+      background: var(--amarillo);
+      border-radius: 14px;
     }
   </style>
 </head>
 <body>
 
   <!-- Inicio -->
-  <section id="inicio" class="pantalla">
-    <div class="interior">
-      <div class="venn">
-        <div class="circulo c-real">Real</div>
-        <div class="circulo c-ia">IA</div>
+  <section id="inicio" class="pantalla fondo-azul">
+    <div class="arriba">
+
+      <!-- Rostro mitad persona, mitad IA -->
+      <div class="retrato">
+        <svg viewBox="0 0 260 260" role="img" aria-label="Rostro mitad persona y mitad inteligencia artificial">
+          <defs>
+            <clipPath id="marco"><circle cx="130" cy="130" r="120"/></clipPath>
+            <clipPath id="izq"><rect x="0" y="0" width="130" height="260"/></clipPath>
+            <clipPath id="der"><rect x="130" y="0" width="130" height="260"/></clipPath>
+          </defs>
+          <circle cx="130" cy="130" r="120" fill="#5ad1ff"/>
+          <g clip-path="url(#marco)">
+
+            <!-- Lado persona -->
+            <g clip-path="url(#izq)">
+              <path d="M20 260 Q30 195 130 190 L130 260 Z" fill="#eaf0ff"/>
+              <ellipse cx="130" cy="125" rx="58" ry="72" fill="#ffffff"/>
+              <path d="M70 118 Q70 52 130 50 L130 78 Q96 80 88 118 Z" fill="#0b1b5c"/>
+              <circle cx="108" cy="124" r="8" fill="#0b1b5c"/>
+              <circle cx="111" cy="121" r="2.5" fill="#ffffff"/>
+              <path d="M95 106 Q108 98 121 105" stroke="#0b1b5c" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M104 158 Q118 170 130 165" stroke="#0b1b5c" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </g>
+
+            <!-- Lado IA -->
+            <g clip-path="url(#der)">
+              <path d="M240 260 Q230 195 130 190 L130 260 Z" fill="#14307f"/>
+              <ellipse cx="130" cy="125" rx="58" ry="72" fill="#0b1b5c"/>
+              <rect x="136" y="90" width="12" height="12" fill="#1d3fd1"/>
+              <rect x="148" y="90" width="12" height="12" fill="#2f5bff"/>
+              <rect x="160" y="102" width="12" height="12" fill="#1d3fd1"/>
+              <rect x="172" y="126" width="12" height="12" fill="#2f5bff"/>
+              <rect x="160" y="138" width="12" height="12" fill="#1d3fd1"/>
+              <rect x="172" y="150" width="12" height="12" fill="#2447e8"/>
+              <rect x="148" y="174" width="12" height="12" fill="#2f5bff"/>
+              <rect x="136" y="186" width="12" height="12" fill="#2447e8"/>
+              <rect x="140" y="102" width="28" height="5" rx="2" fill="#5ad1ff"/>
+              <rect x="142" y="116" width="24" height="16" rx="3" fill="#5ad1ff"/>
+              <rect x="150" y="120" width="8" height="8" fill="#0b1b5c"/>
+              <rect x="134" y="160" width="10" height="5" fill="#5ad1ff"/>
+              <rect x="148" y="160" width="10" height="5" fill="#5ad1ff"/>
+              <rect x="162" y="160" width="10" height="5" fill="#5ad1ff"/>
+              <rect x="158" y="38" width="4" height="26" fill="#0b1b5c"/>
+              <circle cx="160" cy="34" r="7" fill="#ffc933"/>
+            </g>
+
+            <line x1="130" y1="50" x2="130" y2="260" stroke="#ffc933" stroke-width="3"/>
+          </g>
+        </svg>
+        <span class="etiqueta e-real">Real</span>
+        <span class="etiqueta e-ia">IA</span>
       </div>
+
       <h1>¿Real o IA?</h1>
-      <p>Verás imágenes, videos y audios. Decide cuáles son reales y cuáles los creó una inteligencia artificial. Toma 2 minutos.</p>
+      <p class="subtitulo">¿Puedes distinguir lo real de lo creado por inteligencia artificial?</p>
+
+      <div class="tipos">
+        <span class="tipo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>
+          Imágenes
+        </span>
+        <span class="tipo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg>
+          Videos
+        </span>
+        <span class="tipo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg>
+          Audios
+        </span>
+      </div>
+    </div>
+
+    <div class="formulario">
+      <p>Elige tu carrera y empieza. Al final verás tu puntaje.</p>
       <select id="carrera">
         <option value="">Elige tu carrera</option>
-        <optgroup label="Licenciaturas e Ingenierías">
-          <option>Administración y Generación de Empresas</option>
-          <option>Ingeniería en Sistemas Computacionales</option>
-          <option>Ingeniería Agroindustrial</option>
-          <option>Licenciatura en Comercio Internacional</option>
-          <option>Licenciatura en Desarrollo Local</option>
-        </optgroup>
-        <optgroup label="Técnicos Universitarios">
-          <option>Técnico en Administración de Empresas Cafetaleras</option>
-          <option>Técnico Universitario en Producción Agrícola</option>
-          <option>Técnico en Tecnología de Alimentos</option>
-          <option>Tecnólogo en Agroexportaciones</option>
-          <option>Técnico en Microfinanzas</option>
-        </optgroup>
+        <option>Administración y Generación de Empresas</option>
+        <option>Ingeniería en Sistemas Computacionales</option>
+        <option>Ingeniería Agroindustrial</option>
+        <option>Licenciatura en Comercio Internacional</option>
+        <option>Licenciatura en Desarrollo Local</option>
+        <option>Técnico en Administración de Empresas Cafetaleras</option>
+        <option>Técnico Universitario en Producción Agrícola</option>
+        <option>Técnico en Tecnología de Alimentos</option>
+        <option>Tecnólogo en Agroexportaciones</option>
+        <option>Técnico en Microfinanzas</option>
         <option>Otro (no soy estudiante)</option>
       </select>
       <button class="boton" onclick="empezar()">Empezar</button>
@@ -283,33 +361,21 @@
     </div>
 
     <div class="barra">
-      <p id="error" class="oculto"></p>
       <div id="botones">
         <button class="btn-real" onclick="responder('Real', this)">Real</button>
         <button class="btn-ia" onclick="responder('IA', this)">IA</button>
       </div>
     </div>
-
-    <div id="feedback" class="sobre oculto">
-      <div class="sobre-interior">
-        <p class="era">Era</p>
-        <p class="palabra" id="palabra"></p>
-        <div class="tarjeta">
-          <p id="titulo-fb"></p>
-          <p id="mensaje"></p>
-          <button class="boton oscuro" id="btn-siguiente" onclick="siguiente()">Siguiente</button>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- Final -->
-  <section id="final" class="pantalla oculto">
+  <section id="final" class="pantalla fondo-azul oculto">
     <div class="interior">
-      <h1 id="puntaje"></h1>
-      <div id="resultados"></div>
+      <h1 id="titulo-final"></h1>
+      <p id="detalle-final"></p>
+      <button id="btn-reintentar" class="boton oculto" onclick="reintentarFallidas()">Reintentar</button>
       <p id="comentario"></p>
-      <p>Cuéntale a un compañero cómo te fue y reta a que lo intente.</p>
+      <p id="aviso" class="oculto">Por favor no compartas las respuestas con tus compañeros. Así el test es justo para todos.</p>
     </div>
   </section>
 
@@ -320,7 +386,7 @@
 
   <script>
     // URL del Web App de Apps Script
-    var URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxuuIfD0gPeur-k4YYkz5zDF-UJMre2zIE0v02XE17zcwmQ5BWkP3yteoLzm2lWxB9f/exec';
+    var URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzRG2XbdqtRVENkT5SLJnTz05ALy7SRE8L_3iTQaDmc-aGcDBU1amevH9qRtnT3j_kD/exec';
 
     // Contenido del test (el id debe existir en CLAVE de Code.gs)
     var ITEMS = [
@@ -328,18 +394,19 @@
       { id: 2, tipo: 'imagen', archivo: 'media/img2.jpg' },
       { id: 3, tipo: 'video',  archivo: 'media/video1.mp4' },
       { id: 4, tipo: 'video',  archivo: 'media/video2.mp4' },
-      // Cuando subas los audios, quita las // de estas dos líneas
-      // { id: 5, tipo: 'audio',  archivo: 'media/audio1.mp3' },
-      // { id: 6, tipo: 'audio',  archivo: 'media/audio2.mp3' }
+      { id: 5, tipo: 'audio',  archivo: 'media/audio1.mp3' },
+      { id: 6, tipo: 'audio',  archivo: 'media/audio2.mp3' }
     ];
 
     var sesion = 'S' + Date.now() + Math.floor(Math.random() * 1000);
     var carrera = '';
     var indice = 0;
-    var aciertos = 0;
-    var resultados = [];
+    var respuestas = [];
     var inicioItem = 0;
-    var enviando = false;
+    var bloqueado = false;
+
+    // Despierta el servidor mientras el estudiante lee
+    fetch(URL_SCRIPT, { mode: 'no-cors' }).catch(function () {});
 
     // Muestra una sola pantalla
     function mostrar(id) {
@@ -351,6 +418,16 @@
       window.scrollTo(0, 0);
     }
 
+    // Cambia el orden de las preguntas
+    function mezclar(lista) {
+      for (var i = lista.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temporal = lista[i];
+        lista[i] = lista[j];
+        lista[j] = temporal;
+      }
+    }
+
     function empezar() {
       carrera = document.getElementById('carrera').value;
       if (carrera === '') {
@@ -358,8 +435,8 @@
         return;
       }
       indice = 0;
-      aciertos = 0;
-      resultados = [];
+      respuestas = [];
+      mezclar(ITEMS);
       mostrarItem();
     }
 
@@ -376,18 +453,6 @@
         html += '<span class="' + clase + '"></span>';
       }
       document.getElementById('progreso').innerHTML = html;
-    }
-
-    // Deja los botones listos para responder
-    function resetBotones() {
-      enviando = false;
-      var contenedor = document.getElementById('botones');
-      contenedor.classList.remove('enviando');
-      var botones = contenedor.querySelectorAll('button');
-      botones[0].textContent = 'Real';
-      botones[1].textContent = 'IA';
-      botones[0].classList.remove('elegido');
-      botones[1].classList.remove('elegido');
     }
 
     function mostrarItem() {
@@ -407,9 +472,14 @@
       }
 
       pintarProgreso();
-      resetBotones();
-      document.getElementById('feedback').className = 'sobre oculto';
-      document.getElementById('error').classList.add('oculto');
+
+      // Deja los botones listos
+      bloqueado = false;
+      var botones = document.getElementById('botones');
+      botones.classList.remove('enviando');
+      var lista = botones.querySelectorAll('button');
+      lista[0].classList.remove('elegido');
+      lista[1].classList.remove('elegido');
 
       inicioItem = Date.now();
       mostrar('pantalla-item');
@@ -424,86 +494,76 @@
       document.getElementById('ampliada').classList.add('oculto');
     }
 
-    // Responde al instante y envía a Apps Script
+    // Guarda la respuesta y pasa a la siguiente sin esperar
     function responder(valor, boton) {
-      if (enviando) {
+      if (bloqueado) {
         return;
       }
-      enviando = true;
-      document.getElementById('error').classList.add('oculto');
+      bloqueado = true;
       document.getElementById('botones').classList.add('enviando');
       boton.classList.add('elegido');
-      boton.textContent = 'Guardando…';
 
       var item = ITEMS[indice];
-      var datos = {
-        sesion: sesion,
-        carrera: carrera,
-        idItem: item.id,
-        tipo: item.tipo,
-        respuesta: valor,
-        segundos: Math.round((Date.now() - inicioItem) / 1000)
-      };
-      enviar(datos, 1);
+      respuestas.push({
+        datos: {
+          sesion: sesion,
+          carrera: carrera,
+          idItem: item.id,
+          tipo: item.tipo,
+          respuesta: valor,
+          segundos: Math.round((Date.now() - inicioItem) / 1000)
+        },
+        estado: 'pendiente',
+        acierto: false
+      });
+      enviar(respuestas.length - 1, 1);
+
+      setTimeout(siguiente, 250);
     }
 
-    function enviar(datos, intento) {
+    // Envía en segundo plano a Apps Script
+    function enviar(pos, intento) {
       fetch(URL_SCRIPT, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(datos)
+        body: JSON.stringify(respuestas[pos].datos)
       })
         .then(function (respuesta) {
           return respuesta.json();
         })
         .then(function (res) {
           if (res.ok) {
-            mostrarResultado(res);
+            respuestas[pos].estado = 'ok';
+            respuestas[pos].acierto = res.acierto;
+            actualizarFinal();
           } else {
-            reintentar(datos, intento);
+            reintentar(pos, intento);
           }
         }, function () {
-          reintentar(datos, intento);
+          reintentar(pos, intento);
         });
     }
 
     // Reintenta solo hasta 3 veces
-    function reintentar(datos, intento) {
+    function reintentar(pos, intento) {
       if (intento < 3) {
         setTimeout(function () {
-          enviar(datos, intento + 1);
-        }, 1200);
-        return;
+          enviar(pos, intento + 1);
+        }, 1500);
+      } else {
+        respuestas[pos].estado = 'error';
+        actualizarFinal();
       }
-      resetBotones();
-      var error = document.getElementById('error');
-      error.textContent = 'No se pudo guardar. Revisa tu internet y toca de nuevo.';
-      error.classList.remove('oculto');
     }
 
-    function mostrarResultado(res) {
-      var titulo = document.getElementById('titulo-fb');
-
-      if (res.acierto) {
-        aciertos++;
-        titulo.textContent = '✓ ¡Acertaste!';
-      } else {
-        titulo.textContent = '✕ Esta vez no';
+    function reintentarFallidas() {
+      for (var i = 0; i < respuestas.length; i++) {
+        if (respuestas[i].estado === 'error') {
+          respuestas[i].estado = 'pendiente';
+          enviar(i, 1);
+        }
       }
-      resultados.push(res.acierto);
-
-      document.getElementById('palabra').textContent = res.real;
-      document.getElementById('mensaje').textContent = res.explicacion;
-
-      if (indice === ITEMS.length - 1) {
-        document.getElementById('btn-siguiente').textContent = 'Ver resultado';
-      } else {
-        document.getElementById('btn-siguiente').textContent = 'Siguiente';
-      }
-
-      // El fondo toma el color de la respuesta correcta
-      var color = (res.real === 'Real') ? 'real' : 'ia';
-      document.getElementById('feedback').className = 'sobre ' + color;
+      actualizarFinal();
     }
 
     function siguiente() {
@@ -511,26 +571,57 @@
       if (indice < ITEMS.length) {
         mostrarItem();
       } else {
-        mostrarFinal();
+        mostrar('final');
+        actualizarFinal();
       }
     }
 
-    function mostrarFinal() {
-      document.getElementById('puntaje').textContent = aciertos + '/' + ITEMS.length;
-
-      var html = '';
-      for (var i = 0; i < resultados.length; i++) {
-        html += '<span class="' + (resultados[i] ? 'hecho' : '') + '"></span>';
+    // Muestra el puntaje cuando todo está guardado
+    function actualizarFinal() {
+      if (indice < ITEMS.length) {
+        return;
       }
-      document.getElementById('resultados').innerHTML = html;
 
+      var pendientes = 0;
+      var fallidas = 0;
+      var aciertos = 0;
+      for (var i = 0; i < respuestas.length; i++) {
+        if (respuestas[i].estado === 'pendiente') {
+          pendientes++;
+        } else if (respuestas[i].estado === 'error') {
+          fallidas++;
+        } else if (respuestas[i].acierto) {
+          aciertos++;
+        }
+      }
+
+      var titulo = document.getElementById('titulo-final');
+      var detalle = document.getElementById('detalle-final');
       var comentario = document.getElementById('comentario');
-      if (aciertos >= ITEMS.length * 0.7) {
-        comentario.textContent = 'Buen ojo. Pero la IA mejora cada mes, así que no bajes la guardia.';
+      var boton = document.getElementById('btn-reintentar');
+      var aviso = document.getElementById('aviso');
+
+      boton.classList.add('oculto');
+      aviso.classList.add('oculto');
+      comentario.textContent = '';
+
+      if (pendientes > 0) {
+        titulo.textContent = 'Guardando tus respuestas…';
+        detalle.textContent = 'Un momento, no cierres la página.';
+      } else if (fallidas > 0) {
+        titulo.textContent = 'No se pudo guardar todo';
+        detalle.textContent = 'Revisa tu internet y toca el botón.';
+        boton.classList.remove('oculto');
       } else {
-        comentario.textContent = 'No eres el único. Hoy la IA es muy difícil de detectar, y por eso hicimos este test.';
+        titulo.textContent = 'Sacaste ' + aciertos + ' de ' + ITEMS.length;
+        detalle.textContent = '';
+        if (aciertos >= ITEMS.length * 0.7) {
+          comentario.textContent = 'Buen ojo. Pero la IA mejora cada mes, así que no bajes la guardia.';
+        } else {
+          comentario.textContent = 'No eres el único. Hoy la IA es muy difícil de detectar, y por eso hicimos este test.';
+        }
+        aviso.classList.remove('oculto');
       }
-      mostrar('final');
     }
   </script>
 </body>
