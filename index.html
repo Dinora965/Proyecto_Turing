@@ -373,7 +373,7 @@
     <div class="interior">
       <h1 id="titulo-final"></h1>
       <p id="detalle-final"></p>
-      <button id="btn-reintentar" class="boton oculto" onclick="reintentarFallidas()">Reintentar</button>
+      <button id="btn-reintentar" class="boton oculto" onclick="reintentarManual()">Reintentar</button>
       <p id="comentario"></p>
       <p id="aviso" class="oculto">Por favor no compartas las respuestas con tus compañeros. Así el test es justo para todos.</p>
     </div>
@@ -404,9 +404,10 @@
     var respuestas = [];
     var inicioItem = 0;
     var bloqueado = false;
-
-    // Despierta el servidor mientras el estudiante lee
-    fetch(URL_SCRIPT, { mode: 'no-cors' }).catch(function () {});
+    var intentos = 0;
+    var aciertos = 0;
+    var total = 0;
+    var ultimoError = '';
 
     // Muestra una sola pantalla
     function mostrar(id) {
@@ -494,7 +495,7 @@
       document.getElementById('ampliada').classList.add('oculto');
     }
 
-    // Guarda la respuesta y pasa a la siguiente sin esperar
+    // Guarda la respuesta en el celular y pasa a la siguiente
     function responder(valor, boton) {
       if (bloqueado) {
         return;
@@ -505,65 +506,13 @@
 
       var item = ITEMS[indice];
       respuestas.push({
-        datos: {
-          sesion: sesion,
-          carrera: carrera,
-          idItem: item.id,
-          tipo: item.tipo,
-          respuesta: valor,
-          segundos: Math.round((Date.now() - inicioItem) / 1000)
-        },
-        estado: 'pendiente',
-        acierto: false
+        idItem: item.id,
+        tipo: item.tipo,
+        respuesta: valor,
+        segundos: Math.round((Date.now() - inicioItem) / 1000)
       });
-      enviar(respuestas.length - 1, 1);
 
       setTimeout(siguiente, 250);
-    }
-
-    // Envía en segundo plano a Apps Script
-    function enviar(pos, intento) {
-      fetch(URL_SCRIPT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(respuestas[pos].datos)
-      })
-        .then(function (respuesta) {
-          return respuesta.json();
-        })
-        .then(function (res) {
-          if (res.ok) {
-            respuestas[pos].estado = 'ok';
-            respuestas[pos].acierto = res.acierto;
-            actualizarFinal();
-          } else {
-            reintentar(pos, intento);
-          }
-        }, function () {
-          reintentar(pos, intento);
-        });
-    }
-
-    // Reintenta solo hasta 3 veces
-    function reintentar(pos, intento) {
-      if (intento < 3) {
-        setTimeout(function () {
-          enviar(pos, intento + 1);
-        }, 1500);
-      } else {
-        respuestas[pos].estado = 'error';
-        actualizarFinal();
-      }
-    }
-
-    function reintentarFallidas() {
-      for (var i = 0; i < respuestas.length; i++) {
-        if (respuestas[i].estado === 'error') {
-          respuestas[i].estado = 'pendiente';
-          enviar(i, 1);
-        }
-      }
-      actualizarFinal();
     }
 
     function siguiente() {
@@ -572,29 +521,77 @@
         mostrarItem();
       } else {
         mostrar('final');
-        actualizarFinal();
+        mostrarEstado('guardando');
+        intentos = 0;
+        enviarTodo();
       }
     }
 
-    // Muestra el puntaje cuando todo está guardado
-    function actualizarFinal() {
-      if (indice < ITEMS.length) {
+    // Envía todas las respuestas en una sola petición
+    function enviarTodo() {
+      if (URL_SCRIPT.indexOf('PEGA_AQUI') !== -1) {
+        ultimoError = 'Falta pegar la URL del Web App en URL_SCRIPT';
+        mostrarEstado('error');
         return;
       }
 
-      var pendientes = 0;
-      var fallidas = 0;
-      var aciertos = 0;
-      for (var i = 0; i < respuestas.length; i++) {
-        if (respuestas[i].estado === 'pendiente') {
-          pendientes++;
-        } else if (respuestas[i].estado === 'error') {
-          fallidas++;
-        } else if (respuestas[i].acierto) {
-          aciertos++;
-        }
-      }
+      var control = new AbortController();
+      var reloj = setTimeout(function () {
+        control.abort();
+      }, 40000);
 
+      fetch(URL_SCRIPT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ sesion: sesion, carrera: carrera, respuestas: respuestas }),
+        signal: control.signal
+      })
+        .then(function (respuesta) {
+          clearTimeout(reloj);
+          return respuesta.text();
+        })
+        .then(function (texto) {
+          var res = null;
+          try {
+            res = JSON.parse(texto);
+          } catch (e) {
+            ultimoError = 'La respuesta no es JSON. Revisa la URL y la implementación';
+          }
+          if (res !== null && res.ok) {
+            aciertos = res.aciertos;
+            total = res.total;
+            mostrarEstado('listo');
+          } else {
+            if (res !== null) {
+              ultimoError = 'Servidor: ' + res.error;
+            }
+            reintentar();
+          }
+        }, function () {
+          clearTimeout(reloj);
+          ultimoError = 'No se pudo conectar con el servidor';
+          reintentar();
+        });
+    }
+
+    // Reintenta con espera al azar para no saturar el servidor
+    function reintentar() {
+      intentos++;
+      if (intentos < 6) {
+        setTimeout(enviarTodo, 2000 + Math.random() * 4000);
+      } else {
+        mostrarEstado('error');
+      }
+    }
+
+    function reintentarManual() {
+      intentos = 0;
+      mostrarEstado('guardando');
+      enviarTodo();
+    }
+
+    // Cambia lo que se ve en la pantalla final
+    function mostrarEstado(estado) {
       var titulo = document.getElementById('titulo-final');
       var detalle = document.getElementById('detalle-final');
       var comentario = document.getElementById('comentario');
@@ -605,17 +602,17 @@
       aviso.classList.add('oculto');
       comentario.textContent = '';
 
-      if (pendientes > 0) {
+      if (estado === 'guardando') {
         titulo.textContent = 'Guardando tus respuestas…';
-        detalle.textContent = 'Un momento, no cierres la página.';
-      } else if (fallidas > 0) {
-        titulo.textContent = 'No se pudo guardar todo';
-        detalle.textContent = 'Revisa tu internet y toca el botón.';
+        detalle.textContent = 'Si hay mucha gente puede tardar unos segundos. No cierres la página.';
+      } else if (estado === 'error') {
+        titulo.textContent = 'No se pudo guardar';
+        detalle.textContent = 'Revisa tu internet y toca el botón. Detalle: ' + ultimoError;
         boton.classList.remove('oculto');
       } else {
-        titulo.textContent = 'Sacaste ' + aciertos + ' de ' + ITEMS.length;
+        titulo.textContent = 'Sacaste ' + aciertos + ' de ' + total;
         detalle.textContent = '';
-        if (aciertos >= ITEMS.length * 0.7) {
+        if (aciertos >= total * 0.7) {
           comentario.textContent = 'Buen ojo. Pero la IA mejora cada mes, así que no bajes la guardia.';
         } else {
           comentario.textContent = 'No eres el único. Hoy la IA es muy difícil de detectar, y por eso hicimos este test.';
